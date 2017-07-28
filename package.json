@@ -1,0 +1,29 @@
+{
+  "name": "express-return",
+  "version": "1.0.0",
+  "description": "Extend express.js and return data from your controllers",
+  "main": "index.js",
+  "directories": {
+    "example": "examples",
+    "test": "test"
+  },
+  "dependencies": {
+    "express": "^4.15.3"
+  },
+  "devDependencies": {
+    "@types/express": "^4.0.36"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/joshhendo/express-return.git"
+  },
+  "author": "Josh Henderson (joshhendo@outlook.com)",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/joshhendo/express-return/issues"
+  },
+  "homepage": "https://github.com/joshhendo/express-return#readme"
+}
