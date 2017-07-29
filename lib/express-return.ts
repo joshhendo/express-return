@@ -20,6 +20,9 @@ export function createApplication(app?: any, methods?: string[]): express.Applic
               return;
             }
             let _res = callback[callbackIndex](req, res, _next);
+            if (!_res) {
+              return;
+            }
             if (!_res.__proto__ || !_res.__proto__.then) {
               _res = Promise.resolve(_res);
             }
