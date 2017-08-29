@@ -1,6 +1,8 @@
 # Express Return
 Extend express.js and return data from your controllers
 
+This is currently a pre-1.0 beta; test thoroughly before using in production, and please report any bugs you find!
+
 ## What is it?
 This package is a wrapper for express.js that allows your controllers to `return` and send back a body and a status code to the caller. Basically, it means, instead of having to do this:
 
