@@ -6,7 +6,8 @@
     "removeComments": true,
     "preserveConstEnums": true,
     "sourceMap": true,
-    "types": ["node", "mocha"]
+    "types": ["node", "mocha"],
+    "declaration": true
   },
   "include": [
     "**/*.ts"

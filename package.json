@@ -3,6 +3,7 @@
   "version": "0.0.2",
   "description": "Extend express.js and return data from your controllers",
   "main": "index.js",
+  "types": "index.d.ts",
   "directories": {
     "example": "examples",
     "test": "test"
