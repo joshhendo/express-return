@@ -46,6 +46,10 @@ app.get('/promise/reject', function (req: express.Request) {
     .then(() => Promise.reject('rejected promise'));
 });
 
+app.get('/just/code', function () {
+  return Promise.resolve({code: 201});
+});
+
 // Error handler
 app.use(function (err: Error, req: express.Request, res: express.Response, next: express.NextFunction) {
   console.error(err.stack);

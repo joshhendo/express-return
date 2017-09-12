@@ -47,8 +47,14 @@ function handleResult(_res: any, res: express.Response) {
       if (_resData.code) {
         res.status(_resData.code);
       }
+      // If it has a body, send it;
+      // if it doesn't have a body
+      // but does have a status code,
+      // end the request
       if (_resData.body) {
         res.send(_resData.body);
+      } else if (_resData.code) {
+        res.end();
       }
     }
   });
