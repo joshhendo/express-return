@@ -69,7 +69,7 @@ expressReturn(app, ['get', 'post']);
 ```
 
 ## Usage
-Once setup, you can return from your controllers an object that contains the properties `body` and/or `code`. If you return just a `body`, it will do `res.send(body)` which will cause the request to be finished and the data sent back. If you return just a `code`, it will do `res.status(code)`, and will not cause the request to be finished (this is an uncommon scenario). If you send back `code` and `body`, it will do `res.status(code)` first then do `res.send(body)`.
+Once setup, you can return from your controllers an object that contains the properties `body` and/or `code`. If you return just a `body`, it will do `res.send(body)` which will cause the request to be finished and the data sent back. If you return just a `code`, it will do `res.status(code)` and trigger a `res.end()` to finish the request (for example, if you want to send back a `201 Created` without any body). If you send back `code` and `body`, it will do `res.status(code)` first then do `res.send(body)`.
 
 If nothing is returned, the wrapper code won't do anything. This means it's possible to send back data the traditional way (meaning this can be used as a drop in replacement for existing code).
 
