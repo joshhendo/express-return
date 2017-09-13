@@ -1,3 +1,3 @@
 
 export {HttpResponse} from './lib/models/http-response';
-export {createApplication} from './lib/express-return';
+export {createApplication, modifyRouter} from './lib/express-return';
