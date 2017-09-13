@@ -35,9 +35,9 @@ export function createApplication(app?: any, methods?: string[]): express.Applic
   return app;
 }
 
-function handleResult(_res: any, res: express.Response) {
+function handleResult(_res: any, res: express.Response): Promise<any> {
   if (!_res) {
-    return;
+    return Promise.resolve();
   }
   if (!_res.__proto__ || !_res.__proto__.then) {
     _res = Promise.resolve(_res);
