@@ -68,6 +68,15 @@ const app = express();
 expressReturn(app, ['get', 'post']);
 ```
 
+You can also pass in anything that implements the IRouter interface into `modifyRouter` like so:
+
+```
+const express = require('express');
+const expressReturn = require('express-return').modifyRouter;
+const router = express.Router();
+expressReturn(router, ['get', 'post']);
+```
+
 ## Usage
 Once setup, you can return from your controllers an object that contains the properties `body` and/or `code`. If you return just a `body`, it will do `res.send(body)` which will cause the request to be finished and the data sent back. If you return just a `code`, it will do `res.status(code)` and trigger a `res.end()` to finish the request (for example, if you want to send back a `201 Created` without any body). If you send back `code` and `body`, it will do `res.status(code)` first then do `res.send(body)`.
 

@@ -1,9 +1,14 @@
 import * as express from 'express';
+import {IRouter} from 'express-serve-static-core';
 
 const DEFAULT_METHODS = ['get', 'post', 'put', 'patch'];
 
-export function createApplication(app?: any, methods?: string[]): express.Application {
+export function createApplication(app?: express.Application, methods?: string[]): express.Application {
   app = app || express();
+  return modifyRouter(app, methods);
+}
+
+export function modifyRouter<T extends IRouter>(app: T, methods?: string[]): T {
   methods = methods || DEFAULT_METHODS;
 
   methods.forEach(function (method: string) {

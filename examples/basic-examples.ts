@@ -1,7 +1,8 @@
 import * as express from 'express';
 import {createApplication, HttpResponse} from '../index';
 
-const app = createApplication();
+const app = express();
+createApplication(app);
 
 // Some basic endpoints
 app.get('/', function (req: express.Request, res: express.Response) {
