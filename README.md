@@ -94,5 +94,19 @@ app.get('/', function (req, res) {
 });
 ```
 
+If using TypeScript, you can import the `HttpResponse` class and do `return new HttpResponse('Hello World', 200)`. Specifying a status code is optional and will default to 200 if not specified.
+
+### Redirect
+
+You can return a property `redirect`, which is a URL that will be passed into the `res.redirect`. If specifying `redirect`, you can optionally specify a status code. Redirect cannot be used with a body; if both are passed in, redirect takes precedence.
+
+If using Typescript, you can import the `HttpRedirect` class and do `return new HttpResponse('http://google.com')'. The first parameter is the URL to redirect to, and the optional second parameter is a status code.`
+
+### Status Code Only
+
+You can specify just a status code without a body.
+
+If using TypeScript, you can import the `HttpCode` class and do `return new HttpCode(404)`. Alternatively, you can use `HttpRespones`, passing in `null` as the first parameter: `return new HttpResponse(null, 404)`.
+
 ### Error Handling
 If an exception is thrown or the returned promise is rejected, the wrapper code will pass the error into `next`, which will pass it into error handling middleware (if defined).

@@ -48,13 +48,24 @@ function handleResult(_res: any, res: express.Response): Promise<any> {
   }
   return _res.then((_resData: any) => {
     if (_resData) {
+
+      if (_resData.redirect) {
+        // Optional 'code' param appears at the start
+        // https://expressjs.com/en/4x/api.html#res.redirect
+        if (_resData.code) {
+          res.redirect(_resData.code, _resData.redirect);
+        } else {
+          res.redirect(_resData.redirect);
+        }
+        return;
+      }
+
       if (_resData.code) {
         res.status(_resData.code);
       }
-      // If it has a body, send it;
-      // if it doesn't have a body
-      // but does have a status code,
-      // end the request
+
+      // If it has a body, send it; if it doesn't have a body
+      // but does have a status code, end the request
       if (_resData.body) {
         res.send(_resData.body);
       } else if (_resData.code) {

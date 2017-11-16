@@ -4,13 +4,13 @@ import {HttpResponse} from '../index';
 import * as supertest from 'supertest';
 import {expect} from 'chai';
 import {spy} from 'sinon';
+import {HttpRedirect} from "../lib/models/http-redirect";
 
 describe('express-return', function() {
   let app: express.Application;
   beforeEach(function () {
     app = ExpressReturn.createApplication();
   });
-
 
   describe('basic return with no promise', function () {
     it('defaults to 200 when no code is specified', function () {
@@ -69,6 +69,58 @@ describe('express-return', function() {
       return supertest(app)
         .get('/test')
         .expect(201);
+    });
+  });
+
+  describe('redirect with promise', function () {
+    it('defaults to 302', function () {
+      const controller = function () {
+        return Promise.resolve()
+          .then(() => new HttpRedirect('http://google.com'));
+      };
+
+      app.get('/redirect/1', controller);
+
+      return supertest(app)
+        .get('/redirect/1')
+        .expect('Location', 'http://google.com')
+        .expect(302)
+    });
+
+    it('allows other status codes', function () {
+      const controller = function () {
+        return Promise.resolve()
+          .then(() => new HttpRedirect('http://microsoft.com', 301));
+      };
+
+      app.get('/redirect/2', controller);
+
+      return supertest(app)
+        .get('/redirect/2')
+        .expect('Location', 'http://microsoft.com')
+        .expect(301)
+    });
+
+    it('custom body doesnt get specified specified', function () {
+      const controller = function () {
+        return Promise.resolve()
+          .then(() => {
+            return {
+              body: 'shouldnt be set',
+              redirect: 'http://google.com',
+            }
+          });
+      };
+
+      app.get('/redirect/3', controller);
+
+      return supertest(app)
+        .get('/redirect/3')
+        .expect('Location', 'http://google.com')
+        .expect(302)
+        .then(response => {
+          expect(response.text).to.equal('Found. Redirecting to http://google.com');
+        });
     });
   });
 
