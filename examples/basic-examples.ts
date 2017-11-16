@@ -1,5 +1,5 @@
 import * as express from 'express';
-import {createApplication, HttpResponse} from '../index';
+import {createApplication, HttpResponse, HttpCode, HttpRedirect} from '../index';
 
 const app = express();
 createApplication(app);
@@ -18,6 +18,8 @@ Try out one of the sample endpoints: <br />
     <li><a href="/promise">/promise</a></li>
     <li><a href="/promise/error">/promise/error</a></li>
     <li><a href="/promise/reject">/promise/reject</a></li>
+    <li><a href="/redirect/me">/redirect-me</a></li>
+    <li><a href="/redirect/me/301">/redirect/me/301</a></li>
 </ul>
     `);
 });
@@ -48,7 +50,15 @@ app.get('/promise/reject', function (req: express.Request) {
 });
 
 app.get('/just/code', function () {
-  return Promise.resolve({code: 201});
+  return Promise.resolve(new HttpCode(201));
+});
+
+app.get('/redirect/me', function () {
+  return Promise.resolve(new HttpRedirect('http://google.com'));
+});
+
+app.get('/redirect/me/301', function () {
+  return Promise.resolve(new HttpRedirect('http://google.com', 301));
 });
 
 // Error handler
