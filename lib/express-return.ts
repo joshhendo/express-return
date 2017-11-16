@@ -1,5 +1,5 @@
 import * as express from 'express';
-import {IRouter} from 'express-serve-static-core';
+import {IRouter, Router} from 'express-serve-static-core';
 
 const DEFAULT_METHODS = ['get', 'post', 'put', 'patch'];
 
@@ -8,14 +8,14 @@ export function createApplication(app?: express.Application, methods?: string[])
   return modifyRouter(app, methods);
 }
 
-export function modifyRouter<T extends IRouter>(app: T, methods?: string[]): T {
+export function modifyRouter<T extends IRouter>(router: T, methods?: string[]): T {
   methods = methods || DEFAULT_METHODS;
 
   methods.forEach(function (method: string) {
     const originalMethod = '_' + method;
-    (<any>app)[originalMethod] = (<any>app)[method];
-    (<any>app)[method] = function (path: string, ...callback: any[]): any {
-      (<any>app)[originalMethod](path, function (req: express.Request, res: express.Response, next: express.NextFunction) {
+    (<any>router)[originalMethod] = (<any>router)[method];
+    (<any>router)[method] = function (path: string, ...callback: any[]): any {
+      (<any>router)[originalMethod](path, function (req: express.Request, res: express.Response, next: express.NextFunction) {
         let callbackIndex = -1;
         const _next = function (errorData?: any) {
           if (callbackIndex < callback.length && !errorData) {
@@ -28,8 +28,7 @@ export function modifyRouter<T extends IRouter>(app: T, methods?: string[]): T {
             handleResult(_res, res)
               .catch(next);
           } else {
-            let _res = <any>next(errorData);
-            handleResult(_res, res);
+            <any>next(errorData);
           }
         };
         _next();
@@ -37,7 +36,7 @@ export function modifyRouter<T extends IRouter>(app: T, methods?: string[]): T {
     };
   });
 
-  return app;
+  return router;
 }
 
 function handleResult(_res: any, res: express.Response): Promise<any> {
