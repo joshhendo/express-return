@@ -39,5 +39,8 @@
   "bugs": {
     "url": "https://github.com/joshhendo/express-return/issues"
   },
-  "homepage": "https://github.com/joshhendo/express-return#readme"
+  "homepage": "https://github.com/joshhendo/express-return#readme",
+  "optionalDependencies": {
+    "memwatch-next": "^0.3.0"
+  }
 }
