@@ -48,7 +48,7 @@ const express = require('express');
 const app = express();
 ```
 
-except with modified `.get`, `.post`, `.put` and `.patch` functions.
+except with modified `.get`, `.post`, `.put`, `.patch` and `.delete` functions.
 
 If you already have an app variable you want to retrofit, you can also pass it in to `expressReturn` as the first argument, and it will modify it appropriately. For example:
 
@@ -56,8 +56,10 @@ If you already have an app variable you want to retrofit, you can also pass it i
 const express = require('express');
 const expressReturn = require('express-return').createApplication;
 const app = express();
-expressReturn(app);
+const appWithReturn = expressReturn(app);
 ```
+
+In this case, you must use the `appWithReturn` object to be able to use the return functionality.
 
 You can also pass in as a second argument an array of which methods you want to be altered. For example, if you only want the `get` and `post` functions to be altered, you could do the following:
 
@@ -65,7 +67,7 @@ You can also pass in as a second argument an array of which methods you want to 
 const express = require('express');
 const expressReturn = require('express-return').createApplication;
 const app = express();
-expressReturn(app, ['get', 'post']);
+const appWithReturn = expressReturn(app, ['get', 'post']);
 ```
 
 You can also pass in anything that implements the IRouter interface into `modifyRouter` like so:
@@ -74,8 +76,10 @@ You can also pass in anything that implements the IRouter interface into `modify
 const express = require('express');
 const expressReturn = require('express-return').modifyRouter;
 const router = express.Router();
-expressReturn(router, ['get', 'post']);
+const routerWithReturn = expressReturn(router, ['get', 'post']);
 ```
+
+The 'withReturn' object is a wrapper around an application or router object. Whilst it wraps many of the common functions, it doesn't wrap everything, and isn't completely interchangeable. As such, it exposes a `.application` or `.router` property (as appropriate) with the underlying Express object. These objects can have `.get` and other verbs associated with them, but working with them directly does not allow for return functionality. 
 
 ## Usage
 Once setup, you can return from your controllers an object that contains the properties `body` and/or `code`. If you return just a `body`, it will do `res.send(body)` which will cause the request to be finished and the data sent back. If you return just a `code`, it will do `res.status(code)` and trigger a `res.end()` to finish the request (for example, if you want to send back a `201 Created` without any body). If you send back `code` and `body`, it will do `res.status(code)` first then do `res.send(body)`.
@@ -85,7 +89,7 @@ If nothing is returned, the wrapper code won't do anything. This means it's poss
 In addition, other functions, such as setting headers through `res`, have not changed. So, for example, to set the content type, you could do:
 
 ```
-app.get('/', function (req, res) {
+appWithReturn.get('/', function (req, res) {
   res.type('text/html');
   return {
     code: 200,
