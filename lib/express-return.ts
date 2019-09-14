@@ -1,7 +1,7 @@
 import * as express from 'express';
-import {ApplicationRequestHandler, IRouter, Router} from 'express-serve-static-core';
-import {IRouterMatcher} from "express";
-import * as http from "http";
+import {ApplicationRequestHandler, IRouter} from 'express-serve-static-core';
+import {IRouterMatcher} from 'express';
+import * as http from 'http';
 
 const DEFAULT_METHODS = ['get', 'post', 'put', 'patch', 'delete'];
 
@@ -13,6 +13,9 @@ export interface ExpressReturn {
   delete?: IRouterMatcher<IRouter>;
   use: ApplicationRequestHandler<IRouter>;
 
+}
+
+export interface ExpressReturnApplication extends ExpressReturn {
   listen?(port: number, hostname: string, backlog: number, callback?: Function): http.Server;
   listen?(port: number, hostname: string, callback?: Function): http.Server;
   listen?(port: number, callback?: Function): http.Server;
@@ -20,22 +23,30 @@ export interface ExpressReturn {
   listen?(handle: any, listeningListener?: Function): http.Server;
 
   init?(): void;
+
   application?: express.Application;
+}
+
+export interface ExpressReturnRouter extends ExpressReturn {
   router?: express.Router;
 }
 
-export function createApplication(app?: express.Application, methods?: string[]): ExpressReturn {
+export function createApplication(app?: express.Application, methods?: string[]): ExpressReturnApplication {
   app = app || express();
-  const wrapper = createWrapper(app, methods);
+  const wrapper = createWrapper(app, methods) as ExpressReturnApplication;
   wrapper.use = app.use.bind(app);
   wrapper.listen = app.listen.bind(app);
   wrapper.init = app.init.bind(app);
-  wrapper.application = app.bind(app);
+  wrapper.application = app;
   return wrapper;
 }
 
-export function modifyRouter<T extends IRouter>(router: T, methods?: string[]): ExpressReturn {
-  const wrapper = createWrapper(router, methods);
+export function createRouter<T extends IRouter>(router?: T, methods?: string[]): ExpressReturnRouter {
+  return modifyRouter(router || express.Router(), methods);
+}
+
+export function modifyRouter<T extends IRouter>(router: T, methods?: string[]): ExpressReturnRouter {
+  const wrapper = createWrapper(router, methods) as ExpressReturnRouter;
   wrapper.use = router.use.bind(router);
   wrapper.router = router;
   return wrapper;
