@@ -4,3 +4,4 @@
 test/
 examples/
 .idea/
+tsconfig.json
