@@ -4,10 +4,10 @@ import {HttpResponse} from '../index';
 import * as supertest from 'supertest';
 import {expect} from 'chai';
 import {spy} from 'sinon';
-import {HttpRedirect} from "../lib/models/http-redirect";
+import {HttpRedirect} from '../lib/models/http-redirect';
 
 describe('express-return', function() {
-  let app: ExpressReturn.ExpressReturn;
+  let app: ExpressReturn.ExpressReturnApplication;
   beforeEach(function () {
     app = ExpressReturn.createApplication();
   });
