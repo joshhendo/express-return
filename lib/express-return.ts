@@ -1,21 +1,47 @@
 import * as express from 'express';
-import {IRouter, Router} from 'express-serve-static-core';
+import {ApplicationRequestHandler, IRouter, Router} from 'express-serve-static-core';
+import {IRouterMatcher} from "express";
+import * as http from "http";
 
 const DEFAULT_METHODS = ['get', 'post', 'put', 'patch'];
 
-export function createApplication(app?: express.Application, methods?: string[]): express.Application {
-  app = app || express();
-  return modifyRouter(app, methods);
+export interface ExpressReturn {
+  post?: IRouterMatcher<IRouter>;
+  get?: IRouterMatcher<IRouter>;
+  put?: IRouterMatcher<IRouter>;
+  patch?: IRouterMatcher<IRouter>;
+  use: ApplicationRequestHandler<IRouter>;
+
+  listen?(port: number, hostname: string, backlog: number, callback?: Function): http.Server;
+  listen?(port: number, hostname: string, callback?: Function): http.Server;
+  listen?(port: number, callback?: Function): http.Server;
+  listen?(path: string, callback?: Function): http.Server;
+  listen?(handle: any, listeningListener?: Function): http.Server;
+
+  init?(): void;
 }
 
-export function modifyRouter<T extends IRouter>(router: T, methods?: string[]): T {
+export function createApplication(app?: express.Application, methods?: string[]): ExpressReturn {
+  app = app || express();
+  const wrapper = createWrapper(app, methods);
+  wrapper.use = app.use.bind(app);
+  wrapper.listen = app.listen.bind(app);
+  wrapper.init = app.init.bind(app);
+  return wrapper;
+}
+
+export function modifyRouter<T extends IRouter>(router: T, methods?: string[]): ExpressReturn {
+  return createWrapper(router, methods);
+}
+
+function createWrapper<T extends IRouter>(router: T, methods?: string[]): ExpressReturn {
   methods = methods || DEFAULT_METHODS;
 
+  const wrapper: any = {};
+
   methods.forEach(function (method: string) {
-    const originalMethod = '_' + method;
-    (<any>router)[originalMethod] = (<any>router)[method];
-    (<any>router)[method] = function (path: string, ...callback: any[]): any {
-      (<any>router)[originalMethod](path, function (req: express.Request, res: express.Response, next: express.NextFunction) {
+    (<any>wrapper)[method] = function (path: string, ...callback: any[]): any {
+      (<any>router)[method](path, function (req: express.Request, res: express.Response, next: express.NextFunction) {
         let callbackIndex = -1;
         const _next = function (errorData?: any) {
           if (callbackIndex < callback.length && !errorData) {
@@ -36,7 +62,7 @@ export function modifyRouter<T extends IRouter>(router: T, methods?: string[]): 
     };
   });
 
-  return router;
+  return wrapper as ExpressReturn;
 }
 
 function handleResult(_res: any, res: express.Response): Promise<any> {

@@ -7,7 +7,7 @@ import {spy} from 'sinon';
 import {HttpRedirect} from "../lib/models/http-redirect";
 
 describe('express-return', function() {
-  let app: express.Application;
+  let app: ExpressReturn.ExpressReturn;
   beforeEach(function () {
     app = ExpressReturn.createApplication();
   });
