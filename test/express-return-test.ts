@@ -20,7 +20,7 @@ describe('express-return', function() {
 
       app.get('/test', controller);
 
-      return supertest(app)
+      return supertest(app.application)
         .get('/test')
         .expect(200)
         .then(response => {
@@ -35,7 +35,7 @@ describe('express-return', function() {
 
       app.get('/test', controller);
 
-      return supertest(app)
+      return supertest(app.application)
         .get('/test')
         .expect(201);
     });
@@ -50,7 +50,7 @@ describe('express-return', function() {
 
       app.get('/test', controller);
 
-      return supertest(app)
+      return supertest(app.application)
         .get('/test')
         .expect(200)
         .then(response => {
@@ -66,7 +66,7 @@ describe('express-return', function() {
 
       app.get('/test', controller);
 
-      return supertest(app)
+      return supertest(app.application)
         .get('/test')
         .expect(201);
     });
@@ -81,7 +81,7 @@ describe('express-return', function() {
 
       app.get('/redirect/1', controller);
 
-      return supertest(app)
+      return supertest(app.application)
         .get('/redirect/1')
         .expect('Location', 'http://google.com')
         .expect(302)
@@ -95,7 +95,7 @@ describe('express-return', function() {
 
       app.get('/redirect/2', controller);
 
-      return supertest(app)
+      return supertest(app.application)
         .get('/redirect/2')
         .expect('Location', 'http://microsoft.com')
         .expect(301)
@@ -114,7 +114,7 @@ describe('express-return', function() {
 
       app.get('/redirect/3', controller);
 
-      return supertest(app)
+      return supertest(app.application)
         .get('/redirect/3')
         .expect('Location', 'http://google.com')
         .expect(302)
@@ -138,7 +138,7 @@ describe('express-return', function() {
 
       app.get('/test', middleware, controller);
 
-      return supertest(app)
+      return supertest(app.application)
         .get('/test')
         .expect(200)
         .then(() => {
@@ -168,7 +168,7 @@ describe('express-return', function() {
       app.get('/test', middleware, controller);
       app.use(errorHandler);
 
-      return supertest(app)
+      return supertest(app.application)
         .get('/test')
         .expect(500)
         .then(() => {
