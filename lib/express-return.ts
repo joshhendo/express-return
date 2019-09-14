@@ -20,7 +20,8 @@ export interface ExpressReturn {
   listen?(handle: any, listeningListener?: Function): http.Server;
 
   init?(): void;
-  application: express.Application;
+  application?: express.Application;
+  router?: express.Router;
 }
 
 export function createApplication(app?: express.Application, methods?: string[]): ExpressReturn {
@@ -34,7 +35,10 @@ export function createApplication(app?: express.Application, methods?: string[])
 }
 
 export function modifyRouter<T extends IRouter>(router: T, methods?: string[]): ExpressReturn {
-  return createWrapper(router, methods);
+  const wrapper = createWrapper(router, methods);
+  wrapper.use = router.use.bind(router);
+  wrapper.router = router;
+  return wrapper;
 }
 
 function createWrapper<T extends IRouter>(router: T, methods?: string[]): ExpressReturn {
