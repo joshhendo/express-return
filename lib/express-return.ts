@@ -3,13 +3,14 @@ import {ApplicationRequestHandler, IRouter, Router} from 'express-serve-static-c
 import {IRouterMatcher} from "express";
 import * as http from "http";
 
-const DEFAULT_METHODS = ['get', 'post', 'put', 'patch'];
+const DEFAULT_METHODS = ['get', 'post', 'put', 'patch', 'delete'];
 
 export interface ExpressReturn {
   post?: IRouterMatcher<IRouter>;
   get?: IRouterMatcher<IRouter>;
   put?: IRouterMatcher<IRouter>;
   patch?: IRouterMatcher<IRouter>;
+  delete?: IRouterMatcher<IRouter>;
   use: ApplicationRequestHandler<IRouter>;
 
   listen?(port: number, hostname: string, backlog: number, callback?: Function): http.Server;
@@ -19,6 +20,7 @@ export interface ExpressReturn {
   listen?(handle: any, listeningListener?: Function): http.Server;
 
   init?(): void;
+  application: express.Application;
 }
 
 export function createApplication(app?: express.Application, methods?: string[]): ExpressReturn {
@@ -27,6 +29,7 @@ export function createApplication(app?: express.Application, methods?: string[])
   wrapper.use = app.use.bind(app);
   wrapper.listen = app.listen.bind(app);
   wrapper.init = app.init.bind(app);
+  wrapper.application = app.bind(app);
   return wrapper;
 }
 
