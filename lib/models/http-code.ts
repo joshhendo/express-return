@@ -1,7 +1,5 @@
-export class HttpCode {
-  code: number;
-
-  constructor(code?: number) {
-    this.code = code;
+export function HttpCode(code: number) {
+  return {
+    code,
   }
 }
