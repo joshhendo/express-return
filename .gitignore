@@ -2,5 +2,6 @@ node_modules/
 **/*.js
 **/*.js.map
 **/*.d.ts
+!lib/models/*.d.ts
 !examples/basic-examples-plain.js
 .idea/
