@@ -1,8 +1,8 @@
 import * as express from 'express';
-import {createApplication, HttpResponse, HttpCode, HttpRedirect, modifyRouter} from '../index';
+import {createRouter} from '../index';
 
 const app = express();
-const router = modifyRouter(express.Router());
+const router = createRouter(express.Router());
 
 app.use('/', router);
 

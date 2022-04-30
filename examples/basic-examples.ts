@@ -1,5 +1,5 @@
 import * as express from 'express';
-import {createApplication, HttpResponse, HttpCode, HttpRedirect} from '../index';
+import {createApplication, createRouter, HttpResponse} from '../index';
 
 const app = createApplication(express());
 

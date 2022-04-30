@@ -88,7 +88,3 @@ export function createApplication(app?: express.Application, methods?: string[])
 export function createRouter<T extends IRouter>(router?: T, methods?: string[]): T {
   return createProxy(router || express.Router(), methods);
 }
-
-export function modifyRouter<T extends IRouter>(router: T, methods?: string[]): T {
-  return createProxy(router, methods);
-}
