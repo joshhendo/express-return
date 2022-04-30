@@ -40,5 +40,8 @@
   "bugs": {
     "url": "https://github.com/joshhendo/express-return/issues"
   },
-  "homepage": "https://github.com/joshhendo/express-return#readme"
+  "homepage": "https://github.com/joshhendo/express-return#readme",
+  "engines": {
+    "node": ">=6.0.0"
+  }
 }

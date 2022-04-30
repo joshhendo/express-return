@@ -1,9 +1,4 @@
-export class HttpRedirect {
-  redirect: string;
-  code: number;
-
-  constructor(redirect: string, code?: number) {
-    this.redirect = redirect;
-    this.code = code;
-  }
+export interface HttpRedirect {
+  redirect_url: string;
+  code?: number;
 }

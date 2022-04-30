@@ -1,7 +1,3 @@
-export class HttpCode {
+export interface HttpCode {
   code: number;
-
-  constructor(code?: number) {
-    this.code = code;
-  }
 }

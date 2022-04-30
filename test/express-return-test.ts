@@ -7,20 +7,20 @@ import {spy} from 'sinon';
 import {HttpRedirect} from '../lib/models/http-redirect';
 
 describe('express-return', function() {
-  let app: ExpressReturn.ExpressReturnApplication;
+  let app: express.Application;
   beforeEach(function () {
     app = ExpressReturn.createApplication();
   });
 
   describe('basic return with no promise', function () {
     it('defaults to 200 when no code is specified', function () {
-      const controller = function() {
-        return new HttpResponse('test');
+      const controller = function(): HttpResponse {
+        return {body: 'test'};
       };
 
       app.get('/test', controller);
 
-      return supertest(app.application)
+      return supertest(app)
         .get('/test')
         .expect(200)
         .then(response => {
@@ -29,13 +29,13 @@ describe('express-return', function() {
     });
 
     it('uses http code returned', function () {
-      const controller = function () {
-        return new HttpResponse('test', 201);
+      const controller = function (): HttpResponse {
+        return {body: 'test', code: 201};
       };
 
       app.get('/test', controller);
 
-      return supertest(app.application)
+      return supertest(app)
         .get('/test')
         .expect(201);
     });
@@ -43,14 +43,14 @@ describe('express-return', function() {
 
   describe('basic return with promise', function () {
     it('defaults to 200 when no code is specified', function () {
-      const controller = function() {
+      const controller = function(): Promise<HttpResponse> {
         return Promise.resolve()
-          .then(() => new HttpResponse('test'))
+          .then(() =>  {return {body: 'test'}})
       };
 
       app.get('/test', controller);
 
-      return supertest(app.application)
+      return supertest(app)
         .get('/test')
         .expect(200)
         .then(response => {
@@ -59,14 +59,14 @@ describe('express-return', function() {
     });
 
     it('uses http code returned', function () {
-      const controller = function () {
+      const controller = function (): Promise<HttpResponse> {
         return Promise.resolve()
-          .then(() => new HttpResponse('test', 201));
+          .then(() => { return {body: 'test', code: 201}});
       };
 
       app.get('/test', controller);
 
-      return supertest(app.application)
+      return supertest(app)
         .get('/test')
         .expect(201);
     });
@@ -74,28 +74,28 @@ describe('express-return', function() {
 
   describe('redirect with promise', function () {
     it('defaults to 302', function () {
-      const controller = function () {
+      const controller = function (): Promise<HttpRedirect> {
         return Promise.resolve()
-          .then(() => new HttpRedirect('http://google.com'));
+          .then(() => { return { redirect_url: 'http://google.com'}});
       };
 
       app.get('/redirect/1', controller);
 
-      return supertest(app.application)
+      return supertest(app)
         .get('/redirect/1')
         .expect('Location', 'http://google.com')
         .expect(302)
     });
 
     it('allows other status codes', function () {
-      const controller = function () {
+      const controller = function (): Promise<HttpRedirect> {
         return Promise.resolve()
-          .then(() => new HttpRedirect('http://microsoft.com', 301));
+          .then(() => { return { redirect_url: 'http://microsoft.com', code: 301}});
       };
 
       app.get('/redirect/2', controller);
 
-      return supertest(app.application)
+      return supertest(app)
         .get('/redirect/2')
         .expect('Location', 'http://microsoft.com')
         .expect(301)
@@ -107,14 +107,14 @@ describe('express-return', function() {
           .then(() => {
             return {
               body: 'shouldnt be set',
-              redirect: 'http://google.com',
+              redirect_url: 'http://google.com',
             }
           });
       };
 
       app.get('/redirect/3', controller);
 
-      return supertest(app.application)
+      return supertest(app)
         .get('/redirect/3')
         .expect('Location', 'http://google.com')
         .expect(302)
@@ -132,13 +132,13 @@ describe('express-return', function() {
         next();
       };
 
-      const controller = function () {
-        return new HttpResponse('test');
+      const controller = function (): HttpResponse {
+        return { body: 'test' };
       };
 
       app.get('/test', middleware, controller);
 
-      return supertest(app.application)
+      return supertest(app)
         .get('/test')
         .expect(200)
         .then(() => {
@@ -154,9 +154,9 @@ describe('express-return', function() {
         next('an error!');
       };
 
-      const controller = function () {
+      const controller = function (): HttpResponse {
         controllerCalled = true;
-        return new HttpResponse('test');
+        return { body: 'test' };
       };
 
       const errorHandler = function(err: any, req: express.Request, res: express.Response, next: express.NextFunction)  {
@@ -168,7 +168,7 @@ describe('express-return', function() {
       app.get('/test', middleware, controller);
       app.use(errorHandler);
 
-      return supertest(app.application)
+      return supertest(app)
         .get('/test')
         .expect(500)
         .then(() => {
