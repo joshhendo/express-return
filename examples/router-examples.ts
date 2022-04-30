@@ -4,7 +4,7 @@ import {createApplication, HttpResponse, HttpCode, HttpRedirect, modifyRouter} f
 const app = express();
 const router = modifyRouter(express.Router());
 
-app.use('/', router.router);
+app.use('/', router);
 
 // Some basic endpoints
 router.get('/', function (req: express.Request, res: express.Response) {
