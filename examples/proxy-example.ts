@@ -12,13 +12,13 @@ const middleware = (req: express.Request, res: express.Response, next: express.N
 app.get('/', middleware, function (req: express.Request, res: express.Response, next: express.NextFunction) {
   //res.send({ foo: 'bar' });
 
-  // return {
-  //   body: {
-  //     boo: 'far'
-  //   }
-  // }
+  return {
+    body: {
+      boo: 'far'
+    }
+  }
 
-  throw new Error('test error');
+  // throw new Error('test error');
 });
 
 app.use((err: any, req: express.Request, res: express.Response, next: express.NextFunction) => {

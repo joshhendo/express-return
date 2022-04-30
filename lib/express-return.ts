@@ -35,11 +35,6 @@ export function createApplicationProxy() {
   let app = express();
 
   const routeHandler = {
-    get(target: any, property: string) {
-      console.log(`Inner handler property ${property} as been read`);
-      return target[property];
-    },
-
     async apply(target: any, thisArg: any, args: any) {
       if (!args || args.length < 3) {
         return target(...args);
@@ -50,6 +45,10 @@ export function createApplicationProxy() {
 
       const res = args[1 + errorArgOffset];
       const next = args[2 + errorArgOffset];
+
+      if (typeof next !== 'function') {
+        return target(...args);
+      }
 
       try {
         const _resData = await target(...args);
@@ -86,17 +85,13 @@ export function createApplicationProxy() {
 
   const handleFunction = function(target: any, property: any) {
     return function(...args: any[]): any {
-      const replacedArgs = [];
-      for (const arg of args) {
-        if (typeof arg !== 'function') {
-          replacedArgs.push(arg);
-          continue;
+      target[property](...args.map(x => {
+        if (typeof x !== 'function') {
+          return x;
         }
 
-        replacedArgs.push(new Proxy(arg, routeHandler));
-      }
-
-      target[property](...replacedArgs);
+        return new Proxy(x, routeHandler);
+      }));
     }
   }
 
@@ -110,13 +105,6 @@ export function createApplicationProxy() {
 
       return handleFunction(target, property);
     },
-
-    apply(target: any, thisArg: any, args: any) {
-      console.log(`Apply called`);
-      const result = target(...args);
-
-      return result;
-    }
   }
 
   const proxy = new Proxy(app, handler);
