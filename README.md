@@ -1,4 +1,5 @@
 # Express Return
+
 Extend express.js and return data from your controllers
 
 This is currently a pre-1.0 beta; test thoroughly before using in production, and please report any bugs you find!
@@ -7,12 +8,13 @@ This is currently a pre-1.0 beta; test thoroughly before using in production, an
 
 This is a major update, with some big changes:
 
-  * Under the hood it's now using the `Proxy` funciton to intercept calls. This is a much cleaner way of implementing this. Previously the code was re-implementing a lot of the router handling.
-  * Due to this, there's no more wrapper function. This means that there's no `app.application` to allow access to the original application object, because there isn't any original application object anymore!
-  * Got rid of classes for the type definitions. `HttpResponse`, `HttpRedirect` and `HttpCode` are all now defined as TypeScript interfaces. See more information below.
-  * Got rid of the `modifyRouter` function, since it's duplication functionality provided by `createRouter`
+- Under the hood it's now using the `Proxy` funciton to intercept calls. This is a much cleaner way of implementing this. Previously the code was re-implementing a lot of the router handling.
+- Due to this, there's no more wrapper function. This means that there's no `app.application` to allow access to the original application object, because there isn't any original application object anymore!
+- Got rid of classes for the type definitions. `HttpResponse`, `HttpRedirect` and `HttpCode` are all now defined as TypeScript interfaces. See more information below.
+- Got rid of the `modifyRouter` function, since it's duplication functionality provided by `createRouter`
 
 ## What is it?
+
 This package is a wrapper for express.js that allows your controllers to `return` and send back a body and a status code to the caller. Basically, it means, instead of having to do this:
 
 ```javascript
@@ -30,19 +32,20 @@ into this
 
 ```javascript
 app.get('/example', function (req) {
-  return Promise.resolve()
-    .then(function () {
-      return {code: 404, body: 'Not Found Example'};
-    });
+  return Promise.resolve().then(function () {
+    return { code: 404, body: 'Not Found Example' };
+  });
 });
 ```
 
 ## Why?
+
 There were two main motivating factors for this implementation. Firstly, it is more natural for many developers coming from other environments, such as ASP.NET, and simplifies many usage scenarios (for example, not having to do `.catch(next)` on promise chains).
 
 However, a larger motivating factor is the ease of testing. For example, setting up a unit or integration test, if just testing the response code and body, you can simply wait for the response to be returned and easily perform assertions as needed.
 
 ## Setup
+
 Basic usage is as follows:
 
 ```javascript
@@ -126,7 +129,7 @@ appWithReturn.get('/', function (req, res) {
   const body = { foo: 'bar' };
   res.send(body);
   return {
-    body
+    body,
   };
 });
 ```
@@ -135,7 +138,7 @@ Each section below outlines what is being done under the hood for each kind of r
 
 ### Return a Body
 
-Once setup, you can return from your controllers an object that contains the property `body`, and optionally the property `code`. If you return just a `body`, it will do `res.send(body)` which will cause the request to be finished and the data sent back. 
+Once setup, you can return from your controllers an object that contains the property `body`, and optionally the property `code`. If you return just a `body`, it will do `res.send(body)` which will cause the request to be finished and the data sent back.
 
 Under the hood this is doing:
 
@@ -161,12 +164,13 @@ To do a redirect, return an object with the property `redirect_url` and optional
 ```javascript
 return {
   redirect_url: 'https://google.com',
-}
+};
 ```
 
 will trigger a redirect.
 
 Under the hood this is doing:
+
 ```javascript
 res.redirect(redirect_url);
 ```
@@ -177,10 +181,11 @@ There are different types of redirects that can be done. If no code is defined, 
 return {
   redirect_url: 'https://google.com',
   code: 301,
-}
+};
 ```
 
 Under the hood this is doing:
+
 ```javascript
 res.redirect(code, redirect_url);
 ```
@@ -194,7 +199,7 @@ You can specify just a status code without a body. For example, if you wanted to
 ```javascript
 return {
   code: 404,
-}
+};
 ```
 
 Under the hood, this will do:
@@ -207,6 +212,7 @@ res.end();
 In Typescript there is an interface called `HttpCode` that can be used to enforce proper typing.
 
 ### Error Handling
+
 If an exception is thrown or the returned promise is rejected, the wrapper code will pass the error into `next`, which will pass it into the error handling middleware if it is defined.
 
 You can also use express-return from error handling middleware.
