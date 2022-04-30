@@ -1,5 +1,5 @@
 import * as express from 'express';
-import { IRouter } from 'express-serve-static-core';
+import type { IRouter } from 'express-serve-static-core';
 
 const DEFAULT_METHODS = ['get', 'post', 'put', 'patch', 'delete', 'use'];
 
