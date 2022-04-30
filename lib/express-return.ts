@@ -1,5 +1,5 @@
 import * as express from 'express';
-import {IRouter} from 'express-serve-static-core';
+import { IRouter } from 'express-serve-static-core';
 
 const DEFAULT_METHODS = ['get', 'post', 'put', 'patch', 'delete', 'use'];
 
@@ -53,20 +53,22 @@ export function createProxy(obj: express.Application | express.Router, methods?:
       } catch (err) {
         next(err);
       }
-    }
-  }
+    },
+  };
 
-  const handleFunction = function(target: any, property: any) {
-    return function(...args: any[]): any {
-      target[property](...args.map(x => {
-        if (typeof x !== 'function') {
-          return x;
-        }
+  const handleFunction = function (target: any, property: any) {
+    return function (...args: any[]): any {
+      target[property](
+        ...args.map((x) => {
+          if (typeof x !== 'function') {
+            return x;
+          }
 
-        return new Proxy(x, routeHandler);
-      }));
-    }
-  }
+          return new Proxy(x, routeHandler);
+        })
+      );
+    };
+  };
 
   const handler = {
     get(target: any, property: string) {
@@ -76,7 +78,7 @@ export function createProxy(obj: express.Application | express.Router, methods?:
 
       return handleFunction(target, property);
     },
-  }
+  };
 
   return new Proxy(obj, handler);
 }

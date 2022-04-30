@@ -1,5 +1,5 @@
 import * as express from 'express';
-import {createRouter} from '../index';
+import { createRouter } from '../index';
 
 const app = express();
 const router = createRouter(express.Router());
@@ -12,7 +12,8 @@ router.get('/', function (req: express.Request, res: express.Response) {
   // Currently, returning can only set the body and code
   res.type('text/html');
 
-  return { body: `
+  return {
+    body: `
 Try out one of the sample endpoints: <br />
 <ul>
     <li><a href="/no-promise">/no-promise</a></li>
@@ -23,7 +24,8 @@ Try out one of the sample endpoints: <br />
     <li><a href="/redirect/me">/redirect-me</a></li>
     <li><a href="/redirect/me/301">/redirect/me/301</a></li>
 </ul>
-    `};
+    `,
+  };
 });
 
 router.get('/no-promise', function (req: express.Request) {
@@ -35,32 +37,31 @@ router.get('/no-promise/error', function (req: express.Request) {
 });
 
 router.get('/promise', function (req: express.Request) {
-  return Promise.resolve()
-    .then(() => { return { body: 'hello world 222', code: 404 }});
+  return Promise.resolve().then(() => {
+    return { body: 'hello world 222', code: 404 };
+  });
 });
 
 router.get('/promise/error', function (req: express.Request) {
-  return Promise.resolve()
-    .then(() => {
-      throw new Error('error here');
-    });
+  return Promise.resolve().then(() => {
+    throw new Error('error here');
+  });
 });
 
 router.get('/promise/reject', function (req: express.Request) {
-  return Promise.resolve()
-    .then(() => Promise.reject('rejected promise'));
+  return Promise.resolve().then(() => Promise.reject('rejected promise'));
 });
 
 app.get('/just/code', function () {
-  return Promise.resolve({code: 201});
+  return Promise.resolve({ code: 201 });
 });
 
 app.get('/redirect/me', function () {
-  return Promise.resolve({redirect_url: 'http://google.com'});
+  return Promise.resolve({ redirect_url: 'http://google.com' });
 });
 
 app.get('/redirect/me/301', function () {
-  return Promise.resolve({redirect_url: 'http://google.com', code: 301});
+  return Promise.resolve({ redirect_url: 'http://google.com', code: 301 });
 });
 
 // Error handler

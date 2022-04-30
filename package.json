@@ -23,13 +23,15 @@
     "express": "^4.17.1",
     "express-mocks-http": "0.0.11",
     "mocha": "^6.2.0",
+    "prettier": "^2.6.2",
     "sinon": "^2.4.1",
     "supertest": "^3.0.0",
     "typescript": "^2.6.1"
   },
   "scripts": {
     "test": "mocha test --recursive",
-    "compile": "tsc"
+    "compile": "tsc",
+    "format": "prettier --write ."
   },
   "repository": {
     "type": "git",
@@ -43,5 +45,9 @@
   "homepage": "https://github.com/joshhendo/express-return#readme",
   "engines": {
     "node": ">=6.0.0"
+  },
+  "prettier": {
+    "printWidth": 150,
+    "singleQuote": true
   }
 }
