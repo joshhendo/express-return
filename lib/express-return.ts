@@ -3,7 +3,7 @@ import {ApplicationRequestHandler, IRouter} from 'express-serve-static-core';
 import {IRouterMatcher} from 'express';
 import * as http from 'http';
 
-const DEFAULT_METHODS = ['get', 'post', 'put', 'patch', 'delete'];
+const DEFAULT_METHODS = ['get', 'post', 'put', 'patch', 'delete', 'use'];
 
 export interface ExpressReturn {
   post?: IRouterMatcher<IRouter>;
@@ -29,6 +29,99 @@ export interface ExpressReturnApplication extends ExpressReturn {
 
 export interface ExpressReturnRouter extends ExpressReturn {
   router?: express.Router;
+}
+
+export function createApplicationProxy() {
+  let app = express();
+
+  const routeHandler = {
+    get(target: any, property: string) {
+      console.log(`Inner handler property ${property} as been read`);
+      return target[property];
+    },
+
+    async apply(target: any, thisArg: any, args: any) {
+      if (!args || args.length < 3) {
+        return target(...args);
+      }
+
+      const isErrorHandler = args.length === 4;
+      const errorArgOffset = isErrorHandler ? 1 : 0;
+
+      const res = args[1 + errorArgOffset];
+      const next = args[2 + errorArgOffset];
+
+      try {
+        const _resData = await target(...args);
+
+        if (_resData) {
+          if (_resData.redirect) {
+            // Optional 'code' param appears at the start
+            // https://expressjs.com/en/4x/api.html#res.redirect
+            if (_resData.code) {
+              res.redirect(_resData.code, _resData.redirect);
+            } else {
+              res.redirect(_resData.redirect);
+            }
+            return;
+          }
+
+          if (_resData.code) {
+            res.status(_resData.code);
+          }
+
+          // If it has a body, send it; if it doesn't have a body
+          // but does have a status code, end the request
+          if (_resData.body) {
+            res.send(_resData.body);
+          } else if (_resData.code) {
+            res.end();
+          }
+        }
+      } catch (err) {
+        next(err);
+      }
+    }
+  }
+
+  const handleFunction = function(target: any, property: any) {
+    return function(...args: any[]): any {
+      const replacedArgs = [];
+      for (const arg of args) {
+        if (typeof arg !== 'function') {
+          replacedArgs.push(arg);
+          continue;
+        }
+
+        replacedArgs.push(new Proxy(arg, routeHandler));
+      }
+
+      target[property](...replacedArgs);
+    }
+  }
+
+  const handler = {
+    get(target: any, property: string) {
+      console.log(`Property ${property} has been read`);
+
+      if (DEFAULT_METHODS.indexOf(property) === -1) {
+        return target[property];
+      }
+
+      return handleFunction(target, property);
+    },
+
+    apply(target: any, thisArg: any, args: any) {
+      console.log(`Apply called`);
+      const result = target(...args);
+
+      return result;
+    }
+  }
+
+  const proxy = new Proxy(app, handler);
+
+  return proxy;
 }
 
 export function createApplication(app?: express.Application, methods?: string[]): ExpressReturnApplication {
