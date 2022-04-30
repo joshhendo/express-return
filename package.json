@@ -1,6 +1,6 @@
 {
   "name": "express-return",
-  "version": "0.1.2",
+  "version": "0.2.0",
   "description": "Extend express.js and return data from your controllers",
   "main": "index.js",
   "types": "index.d.ts",
