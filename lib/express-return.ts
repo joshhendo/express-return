@@ -27,13 +27,13 @@ export function createProxy(obj: express.Application | express.Router, methods?:
         const _resData = await target(...args);
 
         if (_resData) {
-          if (_resData.redirect) {
+          if (_resData.redirect_url) {
             // Optional 'code' param appears at the start
             // https://expressjs.com/en/4x/api.html#res.redirect
             if (_resData.code) {
-              res.redirect(_resData.code, _resData.redirect);
+              res.redirect(_resData.code, _resData.redirect_url);
             } else {
-              res.redirect(_resData.redirect);
+              res.redirect(_resData.redirect_url);
             }
             return;
           }

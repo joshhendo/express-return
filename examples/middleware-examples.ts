@@ -10,14 +10,14 @@ app.get('/', function (req: express.Request, res: express.Response) {
   // Currently, returning can only set the body and code
   res.type('text/html');
 
-  return new HttpResponse(`Try POSTing some json to '/post-something'.`)
+  return {body: `Try POSTing some json to '/post-something'.`}
 });
 
 app.post('/post-something', jsonParser, function (req) {
   if (!req.body || JSON.stringify(req.body) == '{}') {
-    return new HttpResponse(`You POSTed invalid or empty JSON!`);
+    return {body: `You POSTed invalid or empty JSON!`};
   }
-  return new HttpResponse(`You posted up: ${JSON.stringify(req.body)}`);
+  return {body: `You posted up: ${JSON.stringify(req.body)}`};
 });
 
 app.listen(3002, function () {
